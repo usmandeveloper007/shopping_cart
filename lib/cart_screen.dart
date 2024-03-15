@@ -97,7 +97,28 @@ class _CartScreenState extends State<CartScreen> {
                                                     children: [
                                                       InkWell(
                                                           onTap: (){
-
+                                                            int quantity = snapshot.data![index].quantity!;
+                                                            int? price = snapshot.data![index].productPrice!;
+                                                            quantity--;
+                                                            int newPrice = quantity * price;
+                                                            dbhelper.updateQuantity(
+                                                                Cart(
+                                                                  id: snapshot.data![index].id,
+                                                                  productId: snapshot.data![index].productId.toString(),
+                                                                  productName: snapshot.data![index].productName!,
+                                                                  initialPrice: snapshot.data![index].initialPrice!,
+                                                                  productPrice: newPrice,
+                                                                  quantity: quantity,
+                                                                  unitTag: snapshot.data![index].unitTag,
+                                                                  image: snapshot.data![index].image,
+                                                                )
+                                                            ).then((value){
+                                                              newPrice = 0;
+                                                              quantity = 0;
+                                                              cart.removeTotalPrice(double.parse(snapshot.data![index].initialPrice!.toString(),));
+                                                            }).onError((error, stackTrace){
+                                                              print(error.toString());
+                                                            });
                                                           },
                                                           child: const Icon(Icons.remove, size: 16,)),
                                                       Text(snapshot.data![index].quantity!.toString()),
